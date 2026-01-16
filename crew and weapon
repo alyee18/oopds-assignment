@@ -1,0 +1,75 @@
+#include<string>
+using namespace std;
+
+class Crew
+{
+    protected:
+    int id;
+    string name;
+
+    public:
+    Crew(int id,const string& name):id(id),name(name){}
+    virtual ~Crew(){}
+    virtual string getRole() = 0;
+};//crew的class整体
+
+class Pilot:public Crew
+{
+    public:
+        Pilot(int id,const string& name):Crew(id,name){}
+        
+        string getRole()
+        {return"Pilot";}
+};//pilot
+
+class Gunner:public Crew
+{
+    public:
+        Gunner(int id,const string& name):Crew(id,name){}
+        
+        string getRole()
+        {return"Gunner";}
+};//gunner
+
+class TorpedoHandler:public Crew
+{
+    public:
+        TorpedoHandler(int id,const string& name):Crew(id,name){}
+        
+        string getRole()
+        {return"TorpedoHandler";}
+};//torpedohandler
+
+class Weapon
+{
+protected:
+    int damage;
+
+public:
+    Weapon(int damage) : damage(damage) {}
+    virtual ~Weapon() {}
+
+    int getDamage() {
+        return damage;
+    }
+
+    virtual string getType() = 0;
+};//weapon的class整体
+
+class LightCannon : public Weapon
+{
+public:
+    LightCannon(int damage) : Weapon(damage) {}
+
+    string getType()
+    {return "LightCannon";}
+};//LightCanon
+
+class Torpedo : public Weapon
+{
+public:
+    Torpedo(int damage) : Weapon(damage) {}
+
+    string getType()
+    {return "Torpedo";}
+};//Torpedo
