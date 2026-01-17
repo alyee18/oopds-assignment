@@ -1,0 +1,110 @@
+// =================================================================
+// SOO SHAO XU - Input Handling & Crew Assignment
+// =================================================================
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <memory>
+
+using namespace std;
+
+// 1. Load Ships from CSV: Format [ID, Type, Name]
+vector<shared_ptr<Ship>> loadShipsCSV(const string &filename, const string &teamName) {
+    vector<shared_ptr<Ship>> ships;
+    ifstream file(filename);
+    string line, id, type, name;
+
+    if (!file.is_open()) {
+        cerr << "Error: Could not open " << filename << endl;
+        return ships;
+    }
+
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        stringstream ss(line);
+        // Splitting by comma
+        if (getline(ss, id, ',') && getline(ss, type, ',') && getline(ss, name, ',')) {
+            // makeShip is the factory function Alice is writing
+            auto s = makeShip(type, id, name, teamName);
+            if (s) ships.push_back(s);
+        }
+    }
+    file.close();
+    return ships;
+}
+
+// 2. Load Crew from CSV: Format [ID, Name, Type]
+vector<shared_ptr<Crew>> loadCrewCSV(const string &filename) {
+    vector<shared_ptr<Crew>> crewList;
+    ifstream file(filename);
+    string line, idStr, name, type;
+
+    if (!file.is_open()) {
+        cerr << "Error: Could not open " << filename << endl;
+        return crewList;
+    }
+
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        stringstream ss(line);
+        if (getline(ss, idStr, ',') && getline(ss, name, ',') && getline(ss, type, ',')) {
+            int id = stoi(idStr);
+            // Creating crew members based on their roles
+            if (type == "pilot" || type == "Pilot") 
+                crewList.push_back(make_shared<Pilot>(id, name));
+            else if (type == "gunner" || type == "Gunner") 
+                crewList.push_back(make_shared<Gunner>(id, name));
+            else if (type == "torpedo handler" || type == "TorpedoHandler") 
+                crewList.push_back(make_shared<TorpedoHandler>(id, name));
+        }
+    }
+    file.close();
+    return crewList;
+}
+
+// 3. Optimal Crew Assignment: Spreads crew members to avoid empty ships
+void assignCrewOptimal(vector<shared_ptr<Crew>> &crew, vector<shared_ptr<Ship>> &ships) {
+    if (ships.empty() || crew.empty()) return;
+
+    // Separate crew into pools
+    vector<shared_ptr<Crew>> p, g, t;
+    for (auto &c : crew) {
+        if (c->getRole() == "Pilot") p.push_back(c);
+        else if (c->getRole() == "Gunner") g.push_back(c);
+        else if (c->getRole() == "TorpedoHandler") t.push_back(c);
+    }
+
+    size_t pIdx = 0, gIdx = 0, tIdx = 0;
+
+    // Give every ship 1 Pilot first
+    for (auto &s : ships) {
+        if (pIdx < p.size()) s->getPilots().push_back(p[pIdx++]);
+    }
+
+    // Assign extra pilots to 2-pilot ships
+    for (auto &s : ships) {
+        if (pIdx < p.size() && s->getPilots().size() < 2 && 
+           (s->getType() == "Corazzata" || s->getType() == "Fregatte")) {
+            s->getPilots().push_back(p[pIdx++]);
+        }
+    }
+
+    // Spread Gunners and Torpedo Handlers across all available weapon slots
+    bool assigned;
+    do {
+        assigned = false;
+        for (auto &s : ships) {
+            if (gIdx < g.size() && s->getGunners().size() < s->getNumLightCannons()) {
+                s->getGunners().push_back(g[gIdx++]);
+                assigned = true;
+            }
+            if (tIdx < t.size() && s->getTorpedoHandlers().size() < s->getNumTorpedoes()) {
+                s->getTorpedoHandlers().push_back(t[tIdx++]);
+                assigned = true;
+            }
+        }
+    } while (assigned);
+}
