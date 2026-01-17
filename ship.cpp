@@ -1,10 +1,11 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <vector>
 using namespace std;
 
 // Alice
-// Ship Classes
+// Ship Base Classes
 class Ship {
     protected:
 
@@ -27,7 +28,17 @@ class Ship {
     double hitByLightProb;
     double hitByTorpedoProb;
 
+    // crew containers
+    vector<shared_ptr<Crew>> pilots;
+    vector<shared_ptr<Crew>> gunners;
+    vector<shared_ptr<Crew>> torpedoHandlers;
+
     public:
+    virtual ~Ship() {}
+
+    // xiushen part
+    virtual void fireAt(vector<shared_ptr<Ship>> &enemies) = 0;
+
     virtual string getType() const = 0;
 
     string getId() const { 
@@ -48,13 +59,16 @@ class Ship {
         return maxHP;
     }
 
-    void takeDamage(int damage) {
-        hp -= damage;
-        if (hp < 0) hp =0;
-    }
-
     bool alive() const {
         return hp > 0;
+    }
+
+    int getNumLightCannons() const {
+        return lightCannons
+    }
+
+    int getTorpedoPower() const {
+        return torpedoPower
     }
 
     double getHitByLightProb() const {
@@ -64,9 +78,28 @@ class Ship {
     double getHitByTorpedoProb() const {
         return hitByTorpedoProb;
     }
+
+    // crew access
+    vector<shared_ptr<Crew>> &getPilots() {
+        return pilots;
+    }
+
+    vector<shared_ptr<Crew>> &getGunner() {
+        return gunners;
+    }
+
+    vector<shared_ptr<Crew>> &getTorpedoHandlers() {
+        return torpedoHandlers;
+    }
+
+    void takeDamage(int damage) {
+        hp -= damage;
+        if (hp < 0) hp =0;
+    }
 };
 
-//  Zapezoids Ships
+// Ship Implementation
+// Zapezoids Ships
 class Guerriero : public Ship {
     public:
     Guerriero(const string& _id, const string& _name) {
@@ -93,6 +126,7 @@ class Guerriero : public Ship {
     string getType() const {
         return "Guerriero";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
 
 class Medio : public Ship {
@@ -121,6 +155,7 @@ class Medio : public Ship {
     string getType() const {
         return "Medio";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
 
 class Corazzata : public Ship {
@@ -148,6 +183,7 @@ class Corazzata : public Ship {
     string getType() const {
         return "Corazzata";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
 
 //  Rogoatuskan Ships
@@ -176,6 +212,7 @@ class Jager : public Ship {
     string getType() const {
         return "Jager";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
 
 class Kreuzer : public Ship {
@@ -203,6 +240,7 @@ class Kreuzer : public Ship {
     string getType() const {
         return "Kreuzer";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
 
 class Fregatte : public Ship {
@@ -230,27 +268,5 @@ class Fregatte : public Ship {
     string getType() const {
         return "Fregatte";
     }
+    void fireAt(vector<shared_ptr<Ship>> &enemies) {}
 };
-
-int main() {
-    shared_ptr<Ship> s1 = make_shared<Guerriero>("Z1", "Alpha");
-    shared_ptr<Ship> s2 = make_shared<Fregatte>("R1", "Omega");
-
-    cout << s1->getId() << " "
-         << s1->getType() << " "
-         << s1->getName() << " "
-         << s1->getTeam() << " HP: "
-         << s1->getHP() << endl;
-
-    s1->takeDamage(50);
-
-    cout << "After damage HP: " << s1->getHP() << endl;
-
-    cout << s2->getId() << " "
-         << s2->getType() << " "
-         << s2->getName() << " "
-         << s2->getTeam() << " HP: "
-         << s2->getHP() << endl;
-
-    return 0;
-}
