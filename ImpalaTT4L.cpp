@@ -1,19 +1,8 @@
-// Comment (K-Kooxiushen,S-SooShaoXu,N-Ngjiahui,A-Alice)
-/*
-(K -> A)
-ship class里面要有：
-void fireAt(vector<shared_ptr<Ship>> &enemies); 这个我的part（K）
-string getType() const;
-string getName() const;
-string getTeam() const;
-int getHP() const;
-int getMaxHP() const;
-string getId() const { return id; }
-bool alive() const;
-vector<shared_ptr<Crew>> &getPilots() { return pilots; }
-vector<shared_ptr<Crew>> &getGunners() { return gunners; }
-vector<shared_ptr<Crew>> &getTorpedoHandlers() { return torpedoHandlers; }
-*/
+// IMPALA TT4L
+// Koo Xiu Shen
+// Ng Jia Hui
+// Alice Lim Yu Ee
+// Soo Shao Xu
 
 #include <iostream>
 #include <string>
@@ -249,7 +238,7 @@ public:
         }
     }
 
-    // getType function
+    // getType function - Alice
     virtual string getType() const = 0;
 
     // Getters
@@ -377,7 +366,7 @@ public:
     }
 };
 
-// Ship Implementation
+// Ship Implementation - Alice
 // Zapezoids Ships
 // Guerriero Class
 class Guerriero : public Ship
