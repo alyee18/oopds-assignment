@@ -691,6 +691,7 @@ shared_ptr<Ship> makeShip(const string &type, const string &id, const string &na
     return nullptr;
 }
 
+//SOO SHAO XU
 // 1. Load Ships from CSV: Format [ID, Type, Name]
 vector<shared_ptr<Ship>> loadShipsCSV(const string &filename, const string &teamName)
 {
@@ -878,4 +879,3 @@ void displayFleetConfig(const vector<shared_ptr<Ship>> &ships, const string &tea
     }
     cout << "\n";
 }
-// KOO XIU SHEN
