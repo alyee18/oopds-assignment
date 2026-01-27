@@ -827,6 +827,7 @@ int alive(const vector<shared_ptr<Ship>> &v)
     return count;
 }
 
+//KOO XIU SHEN
 // Function to display fleet configuration report
 void displayFleetConfig(const vector<shared_ptr<Ship>> &ships, const string &teamName)
 {
